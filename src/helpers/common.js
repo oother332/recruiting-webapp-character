@@ -5,3 +5,7 @@ export const isEligibleForClass = (attributes, classRequirements) => {
 
   return isEligible ? 'eligible' : 'ineligible';
 };
+
+export const calculateModifier = (attribute) => {
+  return Math.floor((attribute - 10) / 2);
+};

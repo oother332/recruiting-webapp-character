@@ -1,11 +1,14 @@
 import { useState } from 'react';
 import './App.css';
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
-import { isEligibleForClass } from './helpers/common';
+import { calculateModifier, isEligibleForClass } from './helpers/common';
 
 function App() {
   const [attributes, setAttributes] = useState([10, 10, 10, 10, 10, 10]);
   const [highlightedClass, setHighlightedClass] = useState('Barbarian');
+  const [skills, setSkills] = useState(
+    SKILL_LIST.map((skill) => ({ ...skill, points: 0 }))
+  );
 
   const handleIncrementAttribute = (index) => {
     setAttributes([
@@ -22,6 +25,21 @@ function App() {
       ...attributes.slice(index + 1),
     ]);
   };
+  const handleIncrementSkill = (index) => {
+    setSkills([
+      ...skills.slice(0, index),
+      { ...skills[index], points: skills[index].points + 1 },
+      ...skills.slice(index + 1),
+    ]);
+  };
+
+  const handleDecrementSkill = (index) => {
+    setSkills([
+      ...skills.slice(0, index),
+      { ...skills[index], points: skills[index].points - 1 },
+      ...skills.slice(index + 1),
+    ]);
+  };
 
   return (
     <div className="App">
@@ -33,7 +51,9 @@ function App() {
           <h2>Attributes</h2>
           {ATTRIBUTE_LIST.map((attribute, i) => (
             <div key={attribute}>
-              <label htmlFor={attribute}>{attribute}</label>
+              <label htmlFor={attribute}>
+                {attribute}: {calculateModifier(attributes[i])}
+              </label>
               <input value={attributes[i]} readOnly />
               <button onClick={() => handleIncrementAttribute(i)}>+</button>
               <button onClick={() => handleDecrementAttribute(i)}>-</button>
@@ -67,6 +87,32 @@ function App() {
             <button onClick={() => setHighlightedClass(null)}>Close</button>
           </div>
         )}
+        <div className="section-border">
+          <h2>Skills</h2>
+          {skills.map((skill, i) => (
+            <div key={skill.name}>
+              <p className="inline">
+                {skill.name} points: {skill.points}
+              </p>
+              <button onClick={() => handleIncrementSkill(i)}>+</button>
+              <button onClick={() => handleDecrementSkill(i)}>-</button>
+              <p className="inline">
+                modifier:{' '}
+                {calculateModifier(
+                  attributes[ATTRIBUTE_LIST.indexOf(skill.attributeModifier)]
+                )}
+              </p>
+              <p className="inline">
+                {' '}
+                total:{' '}
+                {skill.points +
+                  calculateModifier(
+                    attributes[ATTRIBUTE_LIST.indexOf(skill.attributeModifier)]
+                  )}
+              </p>
+            </div>
+          ))}
+        </div>
       </section>
     </div>
   );
