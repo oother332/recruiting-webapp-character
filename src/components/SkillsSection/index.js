@@ -1,7 +1,7 @@
 import React from 'react';
 import { ATTRIBUTE_LIST } from '../../consts';
 import { calculateModifier } from '../../helpers/common';
-import SkillsSectionRow from './SkillsSectionRow/SkillsSectionRow';
+import SkillsSectionRow from './SkillsSectionRow';
 
 function SkillsSection({
   skills,
@@ -14,6 +14,7 @@ function SkillsSection({
       <h2>Skills</h2>
       {skills.map((skill, i) => (
         <SkillsSectionRow
+          key={skill.name}
           skill={skill}
           index={i}
           handleIncrementSkill={handleIncrementSkill}

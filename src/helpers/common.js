@@ -9,3 +9,7 @@ export const isEligibleForClass = (attributes, classRequirements) => {
 export const calculateModifier = (attribute) => {
   return Math.floor((attribute - 10) / 2);
 };
+
+export const attributeSum = (attributes) => {
+  return attributes.reduce((acc, curr) => acc + curr, 0);
+};

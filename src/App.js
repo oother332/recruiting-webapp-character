@@ -1,10 +1,12 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import './App.css';
-import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
-import { calculateModifier, isEligibleForClass } from './helpers/common';
-import AttributesSection from './components/AttributesSection/AttributesSection';
-import ClassSection from './components/ClassSection/ClassSection';
-import SkillsSection from './components/SkillsSection/SkillsSection';
+import { SKILL_LIST } from './consts.js';
+import AttributesSection from './components/AttributesSection';
+import ClassSection from './components/ClassSection';
+import SkillsSection from './components/SkillsSection';
+import { createCharacter, getCharacter } from './services/charactersheet';
+import { attributeSum } from './helpers/common';
+import SkillCheckSection from './components/SkillCheckSection';
 
 function App() {
   const [attributes, setAttributes] = useState([10, 10, 10, 10, 10, 10]);
@@ -14,11 +16,13 @@ function App() {
   );
 
   const handleIncrementAttribute = (index) => {
-    setAttributes([
-      ...attributes.slice(0, index),
-      attributes[index] + 1,
-      ...attributes.slice(index + 1),
-    ]);
+    if (attributeSum(attributes) < 70) {
+      setAttributes([
+        ...attributes.slice(0, index),
+        attributes[index] + 1,
+        ...attributes.slice(index + 1),
+      ]);
+    }
   };
 
   const handleDecrementAttribute = (index) => {
@@ -44,10 +48,30 @@ function App() {
     ]);
   };
 
+  useEffect(() => {
+    const callGetCharacter = async () => {
+      const character = await getCharacter();
+      if (character.attributes && character.skills) {
+        setAttributes(character.attributes);
+        setSkills(character.skills);
+      }
+    };
+    callGetCharacter();
+  }, []);
+
+  const createCharacterWrapper = () => {
+    const character = {
+      attributes,
+      skills,
+    };
+    createCharacter(character);
+  };
+
   return (
     <div className="App">
       <header className="App-header">
         <h1>DND Sheet</h1>
+        <button onClick={createCharacterWrapper}>Save Character</button>
       </header>
       <section className="App-section">
         <AttributesSection
@@ -66,6 +90,7 @@ function App() {
           handleIncrementSkill={handleIncrementSkill}
           handleDecrementSkill={handleDecrementSkill}
         />
+        <SkillCheckSection skills={skills} attributes={attributes} />
       </section>
     </div>
   );
