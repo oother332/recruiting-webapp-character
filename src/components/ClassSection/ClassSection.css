@@ -1,0 +1,11 @@
+.charClassName {
+  cursor: pointer;
+}
+
+.eligible {
+  color: green;
+}
+
+.ineligible {
+  color: red;
+}

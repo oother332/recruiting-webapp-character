@@ -22,25 +22,3 @@
   background-color: hsl(220deg 13% 13%);
   color: white;
 }
-
-.section-border {
-  border: 1px solid white;
-  padding: 1rem;
-  border-radius: 0.5rem;
-}
-
-.charClassName {
-  cursor: pointer;
-}
-
-.eligible {
-  color: green;
-}
-
-.ineligible {
-  color: red;
-}
-
-.inline {
-  display: inline;
-}

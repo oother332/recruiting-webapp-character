@@ -2,10 +2,13 @@ import { useState } from 'react';
 import './App.css';
 import { ATTRIBUTE_LIST, CLASS_LIST, SKILL_LIST } from './consts.js';
 import { calculateModifier, isEligibleForClass } from './helpers/common';
+import AttributesSection from './components/AttributesSection/AttributesSection';
+import ClassSection from './components/ClassSection/ClassSection';
+import SkillsSection from './components/SkillsSection/SkillsSection';
 
 function App() {
   const [attributes, setAttributes] = useState([10, 10, 10, 10, 10, 10]);
-  const [highlightedClass, setHighlightedClass] = useState('Barbarian');
+  const [highlightedClass, setHighlightedClass] = useState(null);
   const [skills, setSkills] = useState(
     SKILL_LIST.map((skill) => ({ ...skill, points: 0 }))
   );
@@ -47,72 +50,22 @@ function App() {
         <h1>DND Sheet</h1>
       </header>
       <section className="App-section">
-        <div className="section-border">
-          <h2>Attributes</h2>
-          {ATTRIBUTE_LIST.map((attribute, i) => (
-            <div key={attribute}>
-              <label htmlFor={attribute}>
-                {attribute}: {calculateModifier(attributes[i])}
-              </label>
-              <input value={attributes[i]} readOnly />
-              <button onClick={() => handleIncrementAttribute(i)}>+</button>
-              <button onClick={() => handleDecrementAttribute(i)}>-</button>
-            </div>
-          ))}
-        </div>
-        <div className="section-border">
-          {Object.keys(CLASS_LIST).map((c) => (
-            <div key={c}>
-              <h3
-                className={`${isEligibleForClass(
-                  attributes,
-                  CLASS_LIST[c]
-                )} charClassName`}
-                onClick={() => setHighlightedClass(c)}
-              >
-                {c}
-              </h3>
-            </div>
-          ))}
-        </div>
-        {highlightedClass && (
-          <div className="section-border">
-            {Object.entries(CLASS_LIST[highlightedClass]).map((attr) => (
-              <div key={attr}>
-                <p>
-                  {attr[0]}: {attr[1]}
-                </p>
-              </div>
-            ))}
-            <button onClick={() => setHighlightedClass(null)}>Close</button>
-          </div>
-        )}
-        <div className="section-border">
-          <h2>Skills</h2>
-          {skills.map((skill, i) => (
-            <div key={skill.name}>
-              <p className="inline">
-                {skill.name} points: {skill.points}
-              </p>
-              <button onClick={() => handleIncrementSkill(i)}>+</button>
-              <button onClick={() => handleDecrementSkill(i)}>-</button>
-              <p className="inline">
-                modifier:{' '}
-                {calculateModifier(
-                  attributes[ATTRIBUTE_LIST.indexOf(skill.attributeModifier)]
-                )}
-              </p>
-              <p className="inline">
-                {' '}
-                total:{' '}
-                {skill.points +
-                  calculateModifier(
-                    attributes[ATTRIBUTE_LIST.indexOf(skill.attributeModifier)]
-                  )}
-              </p>
-            </div>
-          ))}
-        </div>
+        <AttributesSection
+          attributes={attributes}
+          handleIncrementAttribute={handleIncrementAttribute}
+          handleDecrementAttribute={handleDecrementAttribute}
+        />
+        <ClassSection
+          attributes={attributes}
+          highlightedClass={highlightedClass}
+          setHighlightedClass={setHighlightedClass}
+        />
+        <SkillsSection
+          attributes={attributes}
+          skills={skills}
+          handleIncrementSkill={handleIncrementSkill}
+          handleDecrementSkill={handleDecrementSkill}
+        />
       </section>
     </div>
   );
